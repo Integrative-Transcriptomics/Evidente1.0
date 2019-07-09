@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title style="font-variant: small-caps">Evidente</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="resources/css/style.css">
+    <link rel="stylesheet" href="resources/css/multiple-select.css">
+    <link rel="stylesheet" href="resources/css/bootstrap-slider.css">
+    <style>
+        a{
+            cursor: pointer;
+        }
+        h1 {
+            text-align: center;
+            font-family: "Helvetica", "Arial", sans-serif;
+        }
+
+        .container {
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+            display: table;
+            width: 100%;
+            align-items: center;
+        }
+
+        .search {
+            margin: 0.5em;
+            width: auto;
+            display: table-cell;
+        }
+
+        .navigation {
+            margin: 0.5em;
+            width: 4em;
+            display: table-cell;
+        }
+
+        .labeling {
+            margin: 0.5em;
+            width: 3em;
+            display: table-cell;
+        }
+
+        .toSeparate {
+            margin-bottom: 1em;
+        }
+
+        .buttonAdapt {
+            width: auto;
+        }
+
+        body {
+            max-width: 90%;
+            height: 95vh;
+            margin: 0.625em auto;
+        }
+
+        #phylocanvas {
+            width: 75%;
+            height: 90vh;
+            background: white;
+            display: inline-block;
+
+        }
+
+        #detail-info, #tools {
+            width: 100%;
+        }
+
+        #tool-info {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 90vh;
+            width: 23%;
+            display: inline-block;
+            margin-left: 1em;
+            padding-right: 1em;
+        }
+
+        #collapse-snp-info, #support-info-div, #non-support-info-div, #common-info-div, #add-info-node {
+            min-height: 5em;
+            max-height: 20em;
+            overflow: auto;
+        }
+
+        #modleaf, #inputSNP, #selectID {
+            width: auto;
+            max-width: 6.5em;
+        }
+         td{
+            min-width: 7.5em;
+        }
+        #selectID {
+            width: auto;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+<h1 style="font-variant: small-caps">Evidente</h1>
+<div style="width: 100%">
+    <div id="phylocanvas"></div>
+    <div id="tool-info">
+        <div id="detail-info">
+            <h3>Node information:
+            </h3>
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1" id="genInfoLink">
+                                General Information </a>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table id="node-info" style="width: 100%; padding: 2em">
+                                <tr>
+                                    <td>
+                                        ID:
+                                    </td>
+                                    <td id="node-id">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Label:
+                                    </td>
+                                    <td id="node-label">
+
+                                    </td>
+                                </tr>
+                                <!--This table should be set larger to have the size for all additional information
+                                a more info link could also be implemented.
+                                -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+                                Additional Information</a>
+                        </h4>
+                    </div>
+                    <div id="collapse5" class="panel-collapse collapse">
+                        <div class="panel-body" id="add-info-node">
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                Supporting SNPs</a>
+                        </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body" id="support-info-div">
+                            <table id="support-info" style="width: 100%">
+                                <tr>
+                                </tr>
+                            </table>
+                            <a onclick="exportTable('support-info')"> Export to file...</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                Non-Supporting SNPs</a>
+                        </h4>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse">
+                        <div class="panel-body" id="non-support-info-div">
+                            <table id="non-support-info" style="width: 100%">
+                                <tr>
+                                </tr>
+                            </table>
+                            <a onclick="exportTable('non-support-info')"> Export to file...</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a id="commonInfoLink" data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                                Common SNPs</a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse">
+                        <div class="panel-body" id="common-info-div">
+                            <div>
+                                <p>Subtrees selected: <span id="subtreeNum"> 0 </span></p>
+                            </div>
+                            <span id="subtree-title"></span>
+                            <table id="common-info" style="width: 100%">
+                                <tr>
+                                </tr>
+                            </table>
+                            <a onclick="exportTable('common-info')"> Export to file...</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tools">
+            <h3>
+                Tools:
+            </h3>
+            <div class="panel-group" id="collapse-tools">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a id="uploadLink" data-toggle="collapse" data-parent="#collapse-tools"
+                               href="#collapseUpload">
+                                Files Upload </a>
+                        </h4>
+                    </div>
+                    <div id="collapseUpload" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div>
+                                <p>Folder:<input id="files-loader" type="file" webkitdirectory directory multiple/></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#collapse-tools" href="#collapset1">
+                                Tree Options</a>
+                        </h4>
+                    </div>
+                    <div id="collapset1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <span>Adjust node sizes</span>
+                            <input type="range" value="0.05" min="0" max="10" step=".05"
+                                   onchange="showValue(this.value)">
+                            <span id="range">0</span> <br>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#collapse-tools" href="#collapset2">
+                                Node Search</a>
+                        </h4>
+                    </div>
+                    <div id="collapset2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="toSeparate">
+                                <div class="container">
+                                    <div class="labeling"><span>Label:</span></div>
+                                    <div class="search"><input type="text" id="modleaf"></div>
+                                    <div class="navigation"><input class="buttonAdapt" type='button'
+                                                                   onclick='selectLabel()' value='Search'/></div>
+                                </div>
+                            </div>
+                            <div class="container">
+                                <div class="labeling"><span>ID:</span></div>
+                                <div class="search"><input type="text" id="selectID"></div>
+                                <div class="navigation"><input class="buttonAdapt" type='button' onclick='selectID()'
+                                                               value='Search'/></div>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a id="filtering" data-toggle="collapse" data-parent="#collapse-tools" href="#collapset4">
+                                Filtering</a>
+                        </h4>
+                    </div>
+                    <div id="collapset4" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id = "filtering-div" class="toSeparate">
+                                <div id="multiple-select-string"></div>
+                                <div id="multiple-select-binary"></div>
+                                <div id="checkboxes"></div>
+                                <div id="ranges"></div>
+                                <div id="extras-filtering"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a id="snpInfoLink" data-toggle="collapse" data-parent="#collapse-tools"
+                               href="#collapset3">
+                                SNP Search</a>
+                        </h4>
+                    </div>
+                    <div id="collapset3" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div>
+                                <div class="container">
+                                    <div class="labeling"><span>Position:</span></div>
+                                    <div class="search"><input type="text" id="inputSNP"></div>
+                                    <div class="navigation"><input class="buttonAdapt" type='button'
+                                                                   onclick='getInputValue()' value='Show'/></div>
+                                </div>
+                                <br>
+                                <h5>Visualizing following SNPs:</h5>
+                                <ol id="listSNP"></ol>
+                                <br>
+                                <input class="buttonAdapt" type='button' onclick='resetSNPList()'
+                                       value='Remove all'/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="snp-info">
+            <h3>SNP Effect:
+            </h3>
+            <div class="panel-group" id="accordion-snp">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-snp" href="#collapse-snp-info" id="snpInfoLinkheader">
+                                Detailed Information </a>
+                        </h4>
+                    </div>
+                    <div id="collapse-snp-info" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="collapse-snp-info-options"></div>
+                            <table id="snp-detail-info" style="width: 100%; padding: 2em">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-snp" href="#vis-stat-analysis" id="visSNPlink">
+                                Details of Visualization </a>
+                        </h4>
+                    </div>
+                    <div id="vis-stat-analysis" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="SNP-eff-vis"></div>
+                            <table id="SNP-eff-vis-table" style="width: 100%; padding: 2em">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-analytics" class="modal animate-bottom">
+
+    <!-- Modal content -->
+    <div id="modal-content" class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="title-statistics"></h3>
+        <div id="content" class="toSeparate">
+
+        </div>
+
+
+    </div>
+
+</div>
+<div id="loader" style="display: none"></div>
+
+<div id="modal-files" class="modal animate-bottom">
+
+    <!-- Modal content -->
+    <div id="modal-files-list" class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Uploaded Files</h3>
+        <div id="files-list" class="toSeparate">
+
+        </div>
+
+
+    </div>
+
+</div>
+<!-- START MODIFY BLOCK -->
+
+<script src="resources/js/decimal.js"></script>
+<script src="resources/js/utilities_iso.js"></script>
+<script src="resources/js/Library_Phylocanvas.js"></script>
+<script src="resources/js/jquery.js"></script>
+<script src="resources/js/bootstrap.js"></script>
+<script src="resources/js/multiple-select.js"></script>
+<script src="resources/js/bootstrap-slider.js"></script>
+<script src="resources/js/html-functions.js"></script>
+<script src="resources/js/pc-functions.js"></script>
+
+<!-- END MODIFY BLOCK -->
+
+</body>
+</html>

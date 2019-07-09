@@ -1,0 +1,8 @@
+Position	Ref	A	B	C	D	E	F	Allele	Annotation	Annotation_Impact	Gene_ID	GO_IDs
+1	A	C	C	.	.	.	.	C	stop_gained	HIGH	gene0	GO:0003677;GO:0005524;GO:0005737
+2	T	.	.	.	A	A	.	A	stop_gained	HIGH	gene1	GO:0003677
+3	C	T	.	.	.	.	T	T	synonymous_variant	LOW	gene1	GO:0046872;GO:0034335;GO:0006265
+4	G	.	.	.	.	.	A	A	synonymous_variant	LOW	gene0	GO:0046872;GO:0034335;GO:0006265
+5	A	G	G	T	C	C	C	G	synonymous_variant	LOW	gene1	GO:0003677
+5	A	G	G	T	C	C	C	C	synonymous_variant	LOW	gene2	GO:0003677
+5	A	G	G	T	C	C	C	T	synonymous_variant	LOW	gene0	GO:0003677
